@@ -62,5 +62,21 @@ export class AuthService {
         }
     }
 
-    
+    async findOneAdmin(id:string){
+            const admin = await this.dbService.admin.findUnique({
+                where:{
+                    id
+                }
+            })
+            return admin
+    }
+
+    async findOneUser(id:string){
+        const user= await this.dbService.endUser.findUnique({
+            where:{
+                id
+            }
+        })
+        return user
+    }
 }
