@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model endUser{
+  id       String    @id @default(uuid())
+  name     String
+  email    String?
+  phone    String
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+  order     order[]
+}
+
+model book{
+  id              String     @id @default(uuid())
+  name            String
+  authorId        String
+  author          author   @relation(fields: [authorId],references: [id])
+  price            Int
+  manufacturedDate DateTime
+  stock            Int
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+  order          order[]
+}
+
+model order {
+  id         String  @id @default(uuid())
+  customerId  String 
+  endUser    endUser  @relation(fields: [customerId],references: [id])
+  bookId     String
+  Book       book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  paymentType   PAYMENTTYPE    
+  deliveredDate DateTime?
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+}
+
+model author {
+  id         String  @id @default(uuid())
+  name       String
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+  isDeleted    Boolean   @default(false)
+  book    book[]
+}
+
+model admin {
+  id     String @id @default(uuid())
+  name   String
+  email  String
+  password String
+  isDeleted  Boolean  @default(false)
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+}
+
+model otp {
+  id        String    @id @default(uuid()) @db.VarChar(255)
+  phone     String?   @unique
+  code      String?   @unique
+  otpStatus OTPSTATUS @default(UNUSED)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+}
+
+
+enum PAYMENTTYPE {
+  COD
+  ONLINE
+}
+
+enum ONLINEORDERSTATUS {
+  PENDING
+  PROCESSING
+  DELIVERING
+  REJECT
+  USER_REJECT
+}
+
+enum OTPSTATUS {
+  UNUSED
+  USED
+}
+
+
