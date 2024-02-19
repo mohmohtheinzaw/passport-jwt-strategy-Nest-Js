@@ -57,7 +57,7 @@ model author {
 model admin {
   id     String @id @default(uuid())
   name   String
-  email  String
+  email  String  @unique
   password String
   isDeleted  Boolean  @default(false)
   createdAt      DateTime       @default(now()) @map("created_at")

@@ -1,7 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
-import { BadRequestException } from 'src/response/response';
-import { IResponse } from 'src/response/response-interfaces';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
@@ -9,7 +7,7 @@ export class AdminService {
         private readonly dbService:PrismaService
     ){}
 
-    async findOne(id:string):Promise<IResponse>{
+    async findOne(id:string){
         try {
             const admin = await this.dbService.admin.findUniqueOrThrow({
                 where:{
@@ -20,23 +18,27 @@ export class AdminService {
                 data:admin,
                 metadata:{
                     message:'fetch admin successfully.',
-                    statusCode:HttpStatus.OK
+                    statusCode:200
                 }
             }
         } catch (error) {
-            throw new BadRequestException({
-                message:'fail to fetch admin',
-                code:HttpStatus.BAD_REQUEST,
-                cause:new Error(error)
-            })
+            
         }
     }
 
-    async fetchAll():Promise<IResponse>{
+    async fetchAll(){
         try {
             const data = await this.dbService.admin.findMany({
-                
+                where:{
+                    
+                }
             })
+            return {
+                data:data,
+                metadata:{
+                    message:'admin fetch successfully.'
+                }
+            }
         } catch (error) {
             
         }

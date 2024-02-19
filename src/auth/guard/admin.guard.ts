@@ -1,9 +1,9 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import {  Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ExceptionConstants } from "src/exception/exceptionConstant";
 
 @Injectable()
-export class AdminAuthGuard extends AuthGuard('admin') {
+export class AdminAuthGuard extends AuthGuard('jwt') {
     handleRequest<TUser = any>(err: any, user: any): TUser {
         if(err || !user) {
             throw err || 
@@ -13,7 +13,6 @@ export class AdminAuthGuard extends AuthGuard('admin') {
                 description:'Invalid or expired token'
             })
         }
-        return user
+        return user;
     }
-    
 }
