@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, RequestMapping } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CustomerRegister, RegisterAdmin } from './dto/auth.dto';
+import { CustomerRegister, LoginCustomer, RegisterAdmin } from './dto/auth.dto';
 import { Responser } from 'src/response/response';
 import { JwtService } from '@nestjs/jwt';
 import { OTPSTATUS } from '@prisma/client';
@@ -71,11 +71,16 @@ export class AuthService {
     try {
       await this.checkOtp(dto.phone,dto.code)
       await this.updateOtpStatus(dto.phone,dto.code,'USED')
-      await this.dbService.endUser.create({
+      const data = await this.dbService.endUser.create({
         data:{
           name:dto.name,
           phone:dto.phone,
         }
+      })
+      return Responser({
+        body:data,
+        message:'register user successfully.',
+        statusCode:HttpStatus.OK
       })
     } catch (error) {
       throw new HttpException('fail to register customer',error,error)
@@ -97,6 +102,52 @@ export class AuthService {
     } catch (error) {
       throw new HttpException('fail to create otp',HttpStatus.BAD_REQUEST)
     } 
+  }
+
+  // private async findOtp(phone: string) {
+  //       const data = await this.dbService.otp.findFirst({
+  //         where: {
+  //           phone,
+  //         },
+  //         orderBy: {
+  //           createdAt: 'desc',
+  //         },
+  //       });
+  //       return data;
+  //     }
+
+  async loginRequestOtp(phone:string){
+    try {
+      const user = await this.checkCustomerExist(phone)
+      if(!user){
+        throw new HttpException('user does not exist',HttpStatus.BAD_REQUEST)
+      }
+      const data = await this.createOtp(phone)
+      return Responser({
+        body:data,
+        message:'login request code success',
+        statusCode:HttpStatus.OK
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException('fail to request login code',HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  async loginCustomer(dto:LoginCustomer){
+    try {
+      await this.checkOtp(dto.phone,dto.code)
+      await this.updateOtpStatus(dto.phone,dto.code,'USED')
+      const data = await this.dbService.endUser.findFirst({
+        where:{
+          phone:dto.phone
+        }
+      })
+      return data
+      //  generate token return 
+    } catch (error) {
+      throw new HttpException('fail to login customer',HttpStatus.BAD_REQUEST)
+    }
   }
 
   async registerAdmin(dto: RegisterAdmin) {

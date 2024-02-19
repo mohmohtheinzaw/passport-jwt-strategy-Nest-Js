@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class AdminService {
                 }
             }
         } catch (error) {
-            
+            throw new HttpException('fail to fetch admin with id',HttpStatus.BAD_REQUEST)
         }
     }
 

@@ -24,6 +24,14 @@ export class CustomerRequest{
     phone:string
 }
 
+export class LoginCustomer{
+    @ApiProperty()
+    phone:string
+
+    @ApiProperty()
+    code:string
+}
+
 export class CustomerRegister{
     // @ApiProperty()
     // firstName:string

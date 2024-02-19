@@ -16,6 +16,12 @@ export class AuthController {
         return this.authService.registerRequestOtp(dto.phone)
     }
 
+    @Post('customer/login-request-otp')
+    @ApiBody({type:CustomerRequest})
+    async customerLoginRequest(@Body() dto:CustomerRequest){
+        return this.authService.loginRequestOtp(dto.phone)
+    }
+
     @Post('customer/register')
     @ApiBody({type:CustomerRegister})
     async registerCustomer(@Body() dto:CustomerRegister){
