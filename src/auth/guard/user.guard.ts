@@ -3,7 +3,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { ExceptionConstants } from "src/exception/exceptionConstant";
 
 @Injectable()
-export class AdminAuthGuard extends AuthGuard('admin') {
+export class UserAuthGuard extends AuthGuard('user') {
     handleRequest<TUser = any>(err: any, user: any): TUser {
         if(err || !user) {
             throw err || 

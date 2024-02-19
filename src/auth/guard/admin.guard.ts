@@ -3,7 +3,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { ExceptionConstants } from "src/exception/exceptionConstant";
 
 @Injectable()
-export class AdminAuthGuard extends AuthGuard('jwt') {
+export class AdminAuthGuard extends AuthGuard('admin') {
     handleRequest<TUser = any>(err: any, user: any): TUser {
         if(err || !user) {
             throw err || 
@@ -16,3 +16,4 @@ export class AdminAuthGuard extends AuthGuard('jwt') {
         return user;
     }
 }
+

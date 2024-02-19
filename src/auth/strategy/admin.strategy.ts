@@ -1,10 +1,10 @@
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { Strategy, ExtractJwt } from 'passport-jwt';
 
 @Injectable()
-export class AdminStrategy extends PassportStrategy(Strategy) {
+export class AdminStrategy extends PassportStrategy(Strategy,'admin') {
     constructor( private readonly authService:AuthService){
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -19,7 +19,6 @@ export class AdminStrategy extends PassportStrategy(Strategy) {
         iat:number;
         exp:number;
     }){
-        console.log('here')
         const user = await this.authService.findOneAdmin(payload.id)
         if(!user){
             throw new UnauthorizedException(

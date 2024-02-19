@@ -18,3 +18,25 @@ export class LoginAdmin{
     @ApiProperty({default:"adminpassword"})
     password:string
 }
+
+export class CustomerRequest{
+    @ApiProperty()
+    phone:string
+}
+
+export class CustomerRegister{
+    // @ApiProperty()
+    // firstName:string
+
+    // @ApiProperty()
+    // lastName:string
+    @ApiProperty()
+    name:string
+
+    @ApiProperty()
+    phone:string
+
+    @ApiProperty()
+    code:string
+
+}
