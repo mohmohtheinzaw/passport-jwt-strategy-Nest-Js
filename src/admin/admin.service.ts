@@ -6,7 +6,6 @@ export class AdminService {
     constructor(
         private readonly dbService:PrismaService
     ){}
-
     async findOne(id:string){
         try {
             const admin = await this.dbService.admin.findUniqueOrThrow({
@@ -29,9 +28,7 @@ export class AdminService {
     async fetchAll(){
         try {
             const data = await this.dbService.admin.findMany({
-                where:{
-                    
-                }
+               
             })
             return {
                 data:data,
@@ -40,7 +37,8 @@ export class AdminService {
                 }
             }
         } catch (error) {
-            
+            throw new HttpException('fail to fetch admin list',HttpStatus.INTERNAL_SERVER_ERROR)
+
         }
     }
 }
