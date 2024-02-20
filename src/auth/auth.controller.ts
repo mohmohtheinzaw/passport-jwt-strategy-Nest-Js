@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { CustomerRegister, CustomerRequest, LoginAdmin, RegisterAdmin } from './dto/auth.dto';
+import { CustomerRegister, CustomerRequest, LoginAdmin, LoginCustomer, RegisterAdmin } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { AdminAuthGuard } from './guard/admin.guard';
 import { CurrentAdmin, IAuthAdmin } from 'src/decorator/admin.decorator';
@@ -26,6 +26,12 @@ export class AuthController {
     @ApiBody({type:CustomerRegister})
     async registerCustomer(@Body() dto:CustomerRegister){
         return this.authService.registerCustomer(dto)
+    }
+
+    @Post('customer/login')
+    @ApiBody({type:LoginCustomer})
+    async loginCustomer(@Body() dto:LoginCustomer){
+        return this.authService.loginCustomer(dto)
     }
 
     @Post('admin/register')

@@ -8,10 +8,14 @@ import { AdminModule } from './admin/admin.module';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { JwtService } from '@nestjs/jwt';
+import { EndUserService } from './end-user/end-user.service';
+import { SocketGateway } from './socket/socket.gateway';
+import { EndUserModule } from './end-user/end-user.module';
+import { EndUserStrategy } from './auth/strategy/user.strategy';
 
 @Module({
-  imports: [AuthModule, AdminModule,PrismaModule],
+  imports: [AuthModule, AdminModule,PrismaModule,EndUserModule],
   controllers: [AppController],
-  providers: [AppService, AuthService, AdminService,PrismaService,JwtService],
+  providers: [AppService, AuthService, AdminService,PrismaService,JwtService, EndUserService,SocketGateway],
 })
 export class AppModule {}

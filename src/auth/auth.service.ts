@@ -87,6 +87,7 @@ export class AuthService {
     }
   }
 
+
   async registerRequestOtp(phone:string){
     try {
       const user = await this.checkCustomerExist(phone)
@@ -143,8 +144,18 @@ export class AuthService {
           phone:dto.phone
         }
       })
-      return data
-      //  generate token return 
+      const token = await this.jwtService.signAsync(
+        {id:data.id,email:data.email},
+        {
+            secret: process.env.ADMIN_SECRET_KEY,
+            expiresIn: '1d',
+          },
+        )
+      return Responser({
+        body:token,
+        message:'login user successfully.',
+        statusCode:HttpStatus.OK
+      })      
     } catch (error) {
       throw new HttpException('fail to login customer',HttpStatus.BAD_REQUEST)
     }

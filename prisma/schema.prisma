@@ -31,19 +31,32 @@ model book{
   stock            Int
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
-  order          order[]
+  OrderProduct   orderProduct[]
 }
 
 model order {
   id         String  @id @default(uuid())
+  orderId     String
   customerId  String 
   endUser    endUser  @relation(fields: [customerId],references: [id])
-  bookId     String
-  Book       book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   paymentType   PAYMENTTYPE    
   deliveredDate DateTime?
+  totalPrice    Int
+  deliveryCharges Int
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+  OrderProduct   orderProduct[]
+}
+
+model orderProduct{
+  id      String    @id @default(uuid())
+  orderId  String
+  Order    order  @relation(fields: [orderId],references: [id])
+  bookId   String  
+  book     book   @relation(fields: [bookId],references: [id])
+  quantity Int
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime?  @default(now()) @updatedAt @map("updated_at")
 }
 
 model author {
