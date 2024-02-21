@@ -22,16 +22,18 @@ model endUser {
 }
 
 model book {
-  id               String         @id @default(uuid())
-  name             String
-  authorId         String
-  author           author         @relation(fields: [authorId], references: [id])
-  price            Int
-  manufacturedDate DateTime
-  stock            Int
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime?      @default(now()) @updatedAt @map("updated_at")
-  OrderProduct     orderProduct[]
+  id                    String                  @id @default(uuid())
+  name                  String
+  authorId              String
+  author                author                  @relation(fields: [authorId], references: [id])
+  price                 Int
+  manufacturedDate      DateTime
+  stock                 Int
+  purchasePrice         Int                     @default(0)
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime?               @default(now()) @updatedAt @map("updated_at")
+  OrderProduct          orderProduct[]
+  periodDiscountProduct periodDiscountProduct[]
 }
 
 model order {
@@ -91,9 +93,35 @@ model otp {
   updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 }
 
+model periodDiscount {
+  id                    String                  @id @default(uuid())
+  name                  String
+  startDate             DateTime
+  endDate               DateTime
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime?               @default(now()) @updatedAt @map("updated_at")
+  periodDiscountProduct periodDiscountProduct[]
+}
+
+model periodDiscountProduct {
+  id               String         @id @default(uuid())
+  periodDiscountId String
+  periodDiscount   periodDiscount @relation(fields: [periodDiscountId], references: [id])
+  bookId           String
+  book             book           @relation(fields: [bookId], references: [id])
+  discountType     DISCOUNTTYPE   @default(PERCENTAGE)
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime?      @default(now()) @updatedAt @map("updated_at")
+}
+
 enum PAYMENTTYPE {
   COD
   ONLINE
+}
+
+enum DISCOUNTTYPE {
+  PERCENTAGE
+  AMOUNT
 }
 
 enum ONLINEORDERSTATUS {
