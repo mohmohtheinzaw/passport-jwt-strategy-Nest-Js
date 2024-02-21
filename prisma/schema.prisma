@@ -10,72 +10,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model endUser{
+model endUser {
   id        String    @id @default(uuid())
   name      String
   email     String?
   phone     String    @unique
   isDeleted Boolean   @default(false)
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
   order     order[]
 }
 
-model book{
-  id              String     @id @default(uuid())
-  name            String
-  authorId        String
-  author          author   @relation(fields: [authorId],references: [id])
+model book {
+  id               String         @id @default(uuid())
+  name             String
+  authorId         String
+  author           author         @relation(fields: [authorId], references: [id])
   price            Int
   manufacturedDate DateTime
   stock            Int
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
-  OrderProduct   orderProduct[]
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime?      @default(now()) @updatedAt @map("updated_at")
+  OrderProduct     orderProduct[]
 }
 
 model order {
-  id         String  @id @default(uuid())
-  orderId     String
-  customerId  String 
-  endUser    endUser  @relation(fields: [customerId],references: [id])
-  paymentType   PAYMENTTYPE    
-  deliveredDate DateTime?
-  totalPrice    Int
+  id              String            @id @default(uuid())
+  orderId         String
+  customerId      String
+  endUser         endUser           @relation(fields: [customerId], references: [id])
+  paymentType     PAYMENTTYPE       @default(COD)
+  status          ONLINEORDERSTATUS @default(PENDING)
+  deliveredDate   DateTime?
+  totalPrice      Int
   deliveryCharges Int
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
-  OrderProduct   orderProduct[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime?         @default(now()) @updatedAt @map("updated_at")
+  OrderProduct    orderProduct[]
 }
 
-model orderProduct{
-  id      String    @id @default(uuid())
-  orderId  String
-  Order    order  @relation(fields: [orderId],references: [id])
-  bookId   String  
-  book     book   @relation(fields: [bookId],references: [id])
-  quantity Int
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime?  @default(now()) @updatedAt @map("updated_at")
+model orderProduct {
+  id        String    @id @default(uuid())
+  orderId   String
+  Order     order     @relation(fields: [orderId], references: [id])
+  bookId    String
+  book      book      @relation(fields: [bookId], references: [id])
+  quantity  Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 }
 
 model author {
-  id         String  @id @default(uuid())
-  name       String
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
-  isDeleted    Boolean   @default(false)
-  book    book[]
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+  isDeleted Boolean   @default(false)
+  book      book[]
 }
 
 model admin {
-  id     String @id @default(uuid())
-  name   String
-  email  String  @unique
-  password String
-  isDeleted  Boolean  @default(false)
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime?      @default(now()) @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  isDeleted Boolean   @default(false)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 }
 
 model otp {
@@ -87,7 +88,6 @@ model otp {
   updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 }
 
-
 enum PAYMENTTYPE {
   COD
   ONLINE
@@ -95,6 +95,7 @@ enum PAYMENTTYPE {
 
 enum ONLINEORDERSTATUS {
   PENDING
+  APPROVED
   PROCESSING
   DELIVERING
   REJECT
@@ -105,5 +106,3 @@ enum OTPSTATUS {
   UNUSED
   USED
 }
-
-
