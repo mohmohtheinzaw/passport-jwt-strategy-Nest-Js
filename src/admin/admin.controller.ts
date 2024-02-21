@@ -1,4 +1,58 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import { AdminService } from './admin.service';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { AdminAuthGuard } from 'src/auth/guard/admin.guard';
+import { AdminUpdateInput, FetchAdmin, OrderConfirm } from './dto/admin.dto';
+import { PaginationParams } from 'src/decorator/pagination.decorator';
+import { CurrentAdmin, IAuthAdmin } from 'src/decorator/admin.decorator';
 
 @Controller('admin')
-export class AdminController {}
+@ApiTags('Admin')
+export class AdminController {
+  constructor(private readonly adminService: AdminService) {}
+
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(AdminAuthGuard)
+  @ApiQuery({ type: FetchAdmin })
+  async fetchAll(
+    @PaginationParams() pagination: { skip: number; take: number },
+  ) {
+    return this.adminService.fetchAll(pagination);
+  }
+
+  @Get('/:id')
+  @ApiBearerAuth()
+  @UseGuards(AdminAuthGuard)
+  async findOne(@Param('id') id: string) {
+    return this.adminService.findOne(id);
+  }
+
+  @Put('/:id')
+  @ApiBearerAuth()
+  @ApiBody({ type: AdminUpdateInput })
+  @UseGuards(AdminAuthGuard)
+  async update(@Param('id') id: string, dto: AdminUpdateInput) {
+    return this.adminService.update(id, dto);
+  }
+
+  @Get('delete/:id')
+  @ApiBearerAuth()
+  @UseGuards(AdminAuthGuard)
+  async delete(@Param('id') id: string) {
+    return this.adminService.delete(id);
+  }
+
+  @Put('order/confirm/:id')
+  @ApiBearerAuth()
+  @UseGuards(AdminAuthGuard)
+  @ApiBody({ type: OrderConfirm })
+  async confirmOrder(
+    @Param('id') id: string,
+    @Body() dto: OrderConfirm,
+    @CurrentAdmin() admin: IAuthAdmin,
+  ) {
+    console.log(id, dto);
+    return this.adminService.approvedOrder(id, admin.id, dto);
+  }
+}

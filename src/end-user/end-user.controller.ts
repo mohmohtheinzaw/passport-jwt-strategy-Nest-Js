@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { EndUserService } from './end-user.service';
 import { CreateOrder } from './dto/end-user.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
@@ -22,5 +30,12 @@ export class EndUserController {
   @UseGuards(UserAuthGuard)
   async fetchOrder(@CurrentUser() user: IAuthUser) {
     return this.endUserService.fetchOrder(user.id);
+  }
+
+  @Put('order/cancel/:id')
+  @ApiBearerAuth()
+  @UseGuards(UserAuthGuard)
+  async cancelOrder(@Param('id') id: string) {
+    return this.endUserService.cancelOrder(id);
   }
 }

@@ -44,6 +44,8 @@ model order {
   deliveredDate   DateTime?
   totalPrice      Int
   deliveryCharges Int
+  actionById      String?
+  admin           admin?            @relation(fields: [actionById], references: [id])
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime?         @default(now()) @updatedAt @map("updated_at")
   OrderProduct    orderProduct[]
@@ -77,6 +79,7 @@ model admin {
   isDeleted Boolean   @default(false)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
+  order     order[]
 }
 
 model otp {
@@ -96,10 +99,11 @@ enum PAYMENTTYPE {
 enum ONLINEORDERSTATUS {
   PENDING
   APPROVED
+  REJECTED
   PROCESSING
   DELIVERING
   REJECT
-  USER_REJECT
+  USER_CANCEL
 }
 
 enum OTPSTATUS {

@@ -71,4 +71,43 @@ export class EndUserService {
       throw new HttpException('fail to fetch order', HttpStatus.BAD_REQUEST);
     }
   }
+
+  private async checkOrderedTimeValidity(id: string) {
+    const order = await this.dbService.order.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+    const currentTime = new Date().getTime();
+    const orderTime = new Date(order.createdAt).getTime();
+    if (currentTime - orderTime > 24 * 60 * 60 * 1000) {
+      throw new HttpException(
+        'you can not cancel order',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async cancelOrder(id: string) {
+    try {
+      // check order created time is greater than 24 or not
+      await this.checkOrderedTimeValidity(id);
+      const data = await this.dbService.order.update({
+        where: {
+          id,
+        },
+        data: {
+          status: 'USER_CANCEL',
+        },
+      });
+      return Responser({
+        body: data,
+        message: 'order cancelled successfully',
+        statusCode: HttpStatus.OK,
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('fail to cancel order', HttpStatus.BAD_REQUEST);
+    }
+  }
 }
