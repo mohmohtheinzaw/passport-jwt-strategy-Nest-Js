@@ -2,11 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Responser } from 'src/response/response';
 import { AdminUpdateInput, OrderConfirm } from './dto/admin.dto';
+import { PaginationService } from 'src/pagination/pagination.service';
+import { contains } from 'class-validator';
+import { Pagination } from 'src/decorator/pagination.decorator';
 
 @Injectable()
 export class AdminService {
   constructor(private readonly dbService: PrismaService) {}
-
+  private readonly paginationService = new PaginationService();
   async findOne(id: string) {
     try {
       const admin = await this.dbService.admin.findUniqueOrThrow({
@@ -27,19 +30,45 @@ export class AdminService {
     }
   }
 
-  async fetchAll(pagination: { skip: number; take: number }) {
+  async fetchAll(pagination: Pagination, search: string) {
+    //console.log(search);
     try {
       const data = await this.dbService.admin.findMany({
         where: {
           isDeleted: false,
+          OR: [
+            {
+              name: {
+                contains: search,
+              },
+            },
+            {
+              email: {
+                contains: search,
+              },
+            },
+          ],
         },
-        take: pagination.take,
-        skip: pagination.skip,
+        take: pagination.limit,
+        skip: pagination.offset,
       });
+      const totalAdmin = await this.dbService.admin.count({
+        where: {
+          isDeleted: false,
+        },
+      });
+      const totalPage = this.paginationService.totalPage(
+        totalAdmin,
+        pagination.size,
+      );
       return Responser({
         message: 'admin list fetch successfully.',
         body: data,
         statusCode: HttpStatus.OK,
+        pagination: {
+          total: totalAdmin,
+          totalPage: totalPage,
+        },
       });
     } catch (error) {
       throw new HttpException(

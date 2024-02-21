@@ -12,10 +12,12 @@ import { EndUserService } from './end-user/end-user.service';
 import { SocketGateway } from './socket/socket.gateway';
 import { EndUserModule } from './end-user/end-user.module';
 import { EndUserStrategy } from './auth/strategy/user.strategy';
+import { PaginationService } from './pagination/pagination.service';
+import { PaginationModule } from './pagination/pagination.module';
 
 @Module({
-  imports: [AuthModule, AdminModule,PrismaModule,EndUserModule],
+  imports: [AuthModule, AdminModule,PrismaModule,EndUserModule, PaginationModule],
   controllers: [AppController],
-  providers: [AppService, AuthService, AdminService,PrismaService,JwtService, EndUserService,SocketGateway],
+  providers: [AppService, AuthService, AdminService,PrismaService,JwtService, EndUserService,SocketGateway, PaginationService],
 })
 export class AppModule {}

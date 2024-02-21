@@ -3,8 +3,12 @@ import { AdminService } from './admin.service';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminAuthGuard } from 'src/auth/guard/admin.guard';
 import { AdminUpdateInput, FetchAdmin, OrderConfirm } from './dto/admin.dto';
-import { PaginationParams } from 'src/decorator/pagination.decorator';
+import {
+  Pagination,
+  PaginationParams,
+} from 'src/decorator/pagination.decorator';
 import { CurrentAdmin, IAuthAdmin } from 'src/decorator/admin.decorator';
+import { Search, SearchParam } from 'src/decorator/search.decorator';
 
 @Controller('admin')
 @ApiTags('Admin')
@@ -16,9 +20,11 @@ export class AdminController {
   @UseGuards(AdminAuthGuard)
   @ApiQuery({ type: FetchAdmin })
   async fetchAll(
-    @PaginationParams() pagination: { skip: number; take: number },
+    @PaginationParams() pagination: Pagination,
+    @SearchParam() searchParam?: Search,
   ) {
-    return this.adminService.fetchAll(pagination);
+    console.log(searchParam.search);
+    return this.adminService.fetchAll(pagination, searchParam.search);
   }
 
   @Get('/:id')
