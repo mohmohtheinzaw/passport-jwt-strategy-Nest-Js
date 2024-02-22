@@ -12,6 +12,28 @@ export class EndUserService {
     private readonly socket: SocketGateway,
   ) {}
 
+  async getAllUser(skip: number, limit: number) {
+    const users = await this.dbService.endUser.findMany({
+      skip,
+      take: limit,
+    });
+    return users;
+  }
+
+  async get(id: string) {
+    const user = await this.dbService.endUser.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+    return user;
+  }
+
+  async total() {
+    const total = await this.dbService.endUser.count();
+    return total;
+  }
+
   async createOrder(userId: string, dto: CreateOrder) {
     const orderId = generateOrderId();
     try {
