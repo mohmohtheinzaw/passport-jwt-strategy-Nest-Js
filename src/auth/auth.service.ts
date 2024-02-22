@@ -279,6 +279,7 @@ export class AuthService {
     } catch (error) {
       throw new HttpException('fail to get google account info', 400);
     }
+    console.log(info);
 
     // if user already login with google
     const user = await this.dbService.endUser.findFirst({
@@ -303,9 +304,10 @@ export class AuthService {
     }
 
     try {
+      console.log('here');
       const data = await this.dbService.endUser.create({
         data: {
-          name: info.name,
+          name: info.name || info.email,
           email: info.email,
           authType: 'GOOGLE',
           isEmailVerified: true,
@@ -324,6 +326,7 @@ export class AuthService {
         statusCode: HttpStatus.OK,
       });
     } catch (error) {
+      console.log(error);
       throw new HttpException('fail to create user', 400);
     }
   }

@@ -21,7 +21,6 @@ export class Google {
     try {
       let response = await axios(config);
       let userInfo = response.data;
-
       return userInfo as GoogleUserInfo;
     } catch (error) {
       throw error;
