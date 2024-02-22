@@ -30,9 +30,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit('order_received', orderId);
   }
 
-  @SubscribeMessage('order_has_been_confirmed')
-  handleOrderConfirmation(@ConnectedSocket() client: Socket, orderId: string) {
-    console.log('order has been confirmed', orderId);
-    //client.emit('order_confirmed',orderId)
+  handleOrderCancel(orderId: string) {
+    console.log('user cancel order');
+    this.server.emit('order_cancel', orderId);
+  }
+
+  handelJoinRoom(@ConnectedSocket() client: Socket, room: string) {
+    client.join(room);
+    console.log('room joined');
+  }
+
+  //@SubscribeMessage('order_approved')
+  handleOrderApproved(room: string, orderId: string) {
+    console.log('order approved');
+    this.server.to(room).emit('order_approved', orderId);
   }
 }

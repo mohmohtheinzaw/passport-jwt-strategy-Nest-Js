@@ -35,6 +35,7 @@ export class EndUserService {
       });
 
       this.socket.handleReceivingOrder(data.id);
+      // join room socket
 
       return Responser({
         body: data,
@@ -100,6 +101,9 @@ export class EndUserService {
           status: 'USER_CANCEL',
         },
       });
+
+      this.socket.handleOrderCancel(data.id);
+
       return Responser({
         body: data,
         message: 'order cancelled successfully',

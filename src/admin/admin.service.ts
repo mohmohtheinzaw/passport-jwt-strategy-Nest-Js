@@ -5,10 +5,14 @@ import { AdminUpdateInput, OrderConfirm } from './dto/admin.dto';
 import { PaginationService } from 'src/pagination/pagination.service';
 import { contains } from 'class-validator';
 import { Pagination } from 'src/decorator/pagination.decorator';
+import { SocketGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly dbService: PrismaService) {}
+  constructor(
+    private readonly dbService: PrismaService,
+    private readonly socket: SocketGateway,
+  ) {}
   private readonly paginationService = new PaginationService();
   async findOne(id: string) {
     try {
@@ -161,6 +165,9 @@ export class AdminService {
       const order = await this.dbService.order.findUniqueOrThrow({
         where: {
           id,
+        },
+        include: {
+          endUser: true,
         },
       });
       console.log(order);
