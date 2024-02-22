@@ -11,15 +11,17 @@ datasource db {
 }
 
 model endUser {
-  id        String    @id @default(uuid())
-  name      String
-  email     String?
-  phone     String    @unique
-  fcm_token String?
-  isDeleted Boolean   @default(false)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
-  order     order[]
+  id              String    @id @default(uuid())
+  name            String
+  email           String?
+  phone           String?   @unique
+  fcm_token       String?
+  authType        AUTHTYPE  @default(PHONE)
+  isEmailVerified Boolean   @default(false)
+  isDeleted       Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime? @default(now()) @updatedAt @map("updated_at")
+  order           order[]
 }
 
 model book {
@@ -138,4 +140,9 @@ enum ONLINEORDERSTATUS {
 enum OTPSTATUS {
   UNUSED
   USED
+}
+
+enum AUTHTYPE {
+  PHONE
+  GOOGLE
 }

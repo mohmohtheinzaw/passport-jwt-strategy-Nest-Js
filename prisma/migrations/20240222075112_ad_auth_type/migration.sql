@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "AUTHTYPE" AS ENUM ('PHONE', 'GOOGLE');
+
+-- AlterTable
+ALTER TABLE "endUser" ADD COLUMN     "authType" "AUTHTYPE" NOT NULL DEFAULT 'PHONE';
